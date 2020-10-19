@@ -22,15 +22,15 @@ const drawParams = {
 
 // 1 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
-	sound1  :  "media/New Adventure Theme.mp3"
+	sound1  :  "media/Thrash Pack.mp3"
 });
 
 function init(){
   audio.setupWebAudio(DEFAULTS.sound1)
 	console.log("init called");
-	console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
+	//console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
 	let canvasElement = document.querySelector("canvas"); // hookup <canvas> element
-  setupUI(canvasElement);
+  setupUI(canvasElement); //hookup ui elements
   canvas.setupCanvas(canvasElement,audio.analyserNode);
   loop();
 }
@@ -91,39 +91,39 @@ function setupUI(canvasElement){
     }
   };
 
-  const gradientCB = document.querySelector("#gradientCB");
-  gradientCB.checked = drawParams.showGradient;
-  gradientCB.onchange = e =>{
-    drawParams.showGradient = e.target.checked;
-  };
+  // const gradientCB = document.querySelector("#gradientCB");
+  //   gradientCB.checked = drawParams.showGradient;
+  //   gradientCB.onchange = e =>{
+  //   drawParams.showGradient = e.target.checked;
+  // };
 
   const barsCB = document.querySelector("#barsCB");
-  barsCB.checked = drawParams.showBars;
-  barsCB.onchange = e =>{
+    barsCB.checked = drawParams.showBars;
+    barsCB.onchange = e =>{
     drawParams.showBars = e.target.checked;
   };
 
-  const circlesCB = document.querySelector("#circlesCB");
-  circlesCB.checked = drawParams.showCircles;
-  circlesCB.onchange = e =>{
-    drawParams.showCircles = e.target.checked;
-  };
+  // const circlesCB = document.querySelector("#circlesCB");
+  //   circlesCB.checked = drawParams.showCircles;
+  //   circlesCB.onchange = e =>{
+  //   drawParams.showCircles = e.target.checked;
+  // };
 
   const noiseCB = document.querySelector("#noiseCB");
-  noiseCB.checked = drawParams.showNoise;
-  noiseCB.onchange = e =>{
+    noiseCB.checked = drawParams.showNoise;
+    noiseCB.onchange = e =>{
     drawParams.showNoise = e.target.checked;
   }
 
   const invertCB = document.querySelector("#invertCB");
-  invertCB.checked = drawParams.showInvert;
-  invertCB.onchange = e =>{
+    invertCB.checked = drawParams.showInvert;
+    invertCB.onchange = e =>{
     drawParams.showInvert = e.target.checked;
   }
   
   const embossCB = document.querySelector("#embossCB");
-  embossCB.checked = drawParams.showEmboss;
-  embossCB.onchange = e =>{
+    embossCB.checked = drawParams.showEmboss;
+    embossCB.onchange = e =>{
     drawParams.showEmboss = e.target.checked;
   }
   
@@ -131,7 +131,6 @@ function setupUI(canvasElement){
 } // end setupUI
 
 function loop(){
-  /* NOTE: This is temporary testing code that we will delete in Part II */
     requestAnimationFrame(loop);
 
     canvas.draw(drawParams);

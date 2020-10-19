@@ -14,11 +14,13 @@ const barInfo =
 {
     spacing : 4,
     margin : 5,
+    startpos: 270,
+    endpos: 755,
     width : 0,
     barWidth : 0,
     barHeight :200,
-    topSpacing: 100,
-    fillStyle : 'rgba(255,255,255,0.50)',
+    topSpacing: 300,
+    fillStyle : 'rgba(202,23,62,1)',
     strokeStyle: 'rgba(0,0,0,0.50)'
 }
 
@@ -35,7 +37,7 @@ function setupCanvas(canvasElement,analyserNodeRef){
 	// this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize/2);
     
-    barInfo.width = canvasWidth - (audioData.length * barInfo.spacing) - barInfo.margin * 2;
+    barInfo.width = (barInfo.endpos - barInfo.startpos) - (audioData.length * barInfo.spacing) - barInfo.margin * 2;
     barInfo.barWidth = barInfo.width / audioData.length;
 }
 
@@ -48,74 +50,68 @@ function draw(params={}){
 	
 	// 2 - draw background
     ctx.save();
-    ctx.fillStyle = "black";
-    ctx.globalAlpha = .1;
+    ctx.fillStyle = "rgb(9,13,33)";
     ctx.fillRect(0,0,canvasWidth,canvasHeight);
     ctx.restore();
 		
 	// 3 - draw gradient
-    if(params.showGradient)
-    {
-        ctx.save();
-        ctx.fillStyle = gradient;
-        ctx.globalAlpha = .3;
-        ctx.fillRect(0,0,canvasWidth,canvasHeight);
-        ctx.restore();
-    }
+    // if(params.showGradient)
+    // {
+    //     ctx.save();
+    //     ctx.fillStyle = gradient;
+    //     ctx.globalAlpha = .3;
+    //     ctx.fillRect(0,0,canvasWidth,canvasHeight);
+    //     ctx.restore();
+    // }
     
     // 4 - draw bars
-    if(params.showBars){
         
-        ctx.save();
-        ctx.fillStyle = barInfo.fillStyle;
-        ctx.strokeStyle = barInfo.strokeStyle;
+    ctx.save();
+    ctx.fillStyle = barInfo.fillStyle;
+    ctx.strokeStyle = barInfo.strokeStyle;
 
-        for(let i=0; i < audioData.length; i++)
-        {
-            ctx.fillRect(barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + 256-audioData[i],barInfo.barWidth,barInfo.barHeight);
-            ctx.strokeRect(barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + 256-audioData[i],barInfo.barWidth,barInfo.barHeight);
-        }
-
-        ctx.restore;
-    }
-	
-    // 5 - draw circles
-    if(params.showCircles)
+    for(let i=0; i < audioData.length; i++)
     {
-        let maxRadius = canvasHeight/4;
+        ctx.fillRect(barInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + 256-audioData[i],barInfo.barWidth,barInfo.barHeight);
+        ctx.strokeRect(barInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + 256-audioData[i],barInfo.barWidth,barInfo.barHeight);
+    }
+
+    ctx.restore;
+
+    // // 5 - draw circles
+    let maxRadius = canvasHeight/4;
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    for(let i=0; i<audioData.length; i++)
+    {
+        let percent = audioData[i] / 255;
+        let circleRadius = percent * maxRadius;
+
+        //red circles
+        ctx.beginPath();
+        ctx.fillStyle = utils.makeColor(160,26,125,.34 - percent /3.0);
+        ctx.arc(canvasWidth/2,canvasHeight/2, circleRadius ,0,2*Math.PI,false);
+        ctx.fill();
+        ctx.closePath();
+
+        //blue circles
+        ctx.beginPath();
+        ctx.fillStyle = utils.makeColor(181,239,138,.25 - percent /3.0);
+        ctx.arc(canvasWidth/2,canvasHeight/2, circleRadius * 1.5 ,0,2*Math.PI,false);
+        ctx.fill();
+        ctx.closePath();
+
+        //yellow circles
         ctx.save();
-        ctx.globalAlpha = 0.5;
-        for(let i=0; i<audioData.length; i++)
-        {
-            let percent = audioData[i] / 255;
-            let circleRadius = percent * maxRadius;
-
-            //red circles
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(160,26,125,.34 - percent /3.0);
-            ctx.arc(canvasWidth/2,canvasHeight/2, circleRadius ,0,2*Math.PI,false);
-            ctx.fill();
-            ctx.closePath();
-
-            //blue circles
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(181,239,138,.25 - percent /3.0);
-            ctx.arc(canvasWidth/2,canvasHeight/2, circleRadius * 1.5 ,0,2*Math.PI,false);
-            ctx.fill();
-            ctx.closePath();
-
-            //yellow circles
-            ctx.save();
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(36,25,9,.5 - percent /3.0);
-            ctx.arc(canvasWidth/2,canvasHeight/2,circleRadius * 0.5 , 0 , 2*Math.PI , false);
-            ctx.fill();
-            ctx.closePath();
-            ctx.restore();
-        }
-
+        ctx.beginPath();
+        ctx.fillStyle = utils.makeColor(36,25,9,.5 - percent /3.0);
+        ctx.arc(canvasWidth/2,canvasHeight/2,circleRadius * 0.5 , 0 , 2*Math.PI , false);
+        ctx.fill();
+        ctx.closePath();
         ctx.restore();
     }
+
+    ctx.restore();
 
     // 6 - bitmap manipulation
 	// TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 

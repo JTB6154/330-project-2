@@ -22,17 +22,26 @@ const barInfo =
     topSpacing: 440,
     travelDistance: 100,
     fillStyle : 'rgba(202,23,62,1)',
-    strokeStyle: 'rgba(0,0,0,0.50)'
-}
+    strokeStyle: 'rgba(0,0,0,0.50)',
+    backgroundColor: 'rgb(9,13,33)'
+};
 
 const pyreInfo = 
 {
-    barStartPos: 270,
-    barEndPos: 755,
-    barFillStyle:  'rgba(202,23,62,1)',
-    barStrokeStyle: 'rgba(0,0,0,0.50)'
+    spacing : 4,
+    margin : 5,
+    startpos: 270,
+    endpos: 795,
+    width : 0,
+    barWidth : 0,
+    barHeight :300,
+    topSpacing: 440,
+    travelDistance: 100,
+    fillStyle : 'rgba(202,23,62,1)',
+    strokeStyle: 'rgba(0,0,0,0.50)',
+    backgroundColor: 'rgb(9,13,33)',
 
-}
+};
 
 
 function setupCanvas(canvasElement,analyserNodeRef){
@@ -49,67 +58,28 @@ function setupCanvas(canvasElement,analyserNodeRef){
     
     barInfo.width = (barInfo.endpos - barInfo.startpos) - (audioData.length * barInfo.spacing) - barInfo.margin * 2;
     barInfo.barWidth = barInfo.width / audioData.length;
+    pyreInfo.width = (pyreInfo.endpos - pyreInfo.startpos) - (audioData.length * barInfo.spacing) - pyreInfo.margin * 2;
+    pyreInfo.barWidth = pyreInfo.width / audioData.length;
 }
 
-function draw(params={},imgaeArray){
+function getWidth(info)
+{
+    info.width = (info.endpos - info.startpos) - (audioData.length * info.spacing) - info.margin * 2;
+    info.barWidth = barInfo.width / audioData.length;
+}
+
+function draw(params={},imageArray){
   // 1 - populate the audioData array with the frequency data from the analyserNode
 	// notice these arrays are passed "by reference" 
 	analyserNode.getByteFrequencyData(audioData);
 	// OR
 	//analyserNode.getByteTimeDomainData(audioData); // waveform data
+    if(params.drawType == 'pyre')
+    {
+        drawPyre(imageArray)
+    }
 	
-	// 2 - draw background
-    ctx.save();
-    ctx.fillStyle = "rgb(9,13,33)";
-    ctx.fillRect(0,0,canvasWidth,canvasHeight);
-    ctx.restore();
-		
-
-    // draw circles
-    let maxRadius = canvasHeight/3;
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    for(let i=0; i<audioData.length; i++)
-    {
-        let percent = audioData[i] / 255;
-        let circleRadius = percent * maxRadius;
-        //blue circles
-        ctx.beginPath();
-        ctx.fillStyle = utils.makeColor(0,138,239,.25 - percent /3.0);
-        ctx.arc(125,500, circleRadius * 1.5 ,0,2*Math.PI,false);
-        ctx.fill();
-        ctx.closePath();
-
-
-    }
-    ctx.restore()
-
-    //draw logo cutout
-    ctx.save();
-    ctx.drawImage(imgaeArray[0],0,0,canvasWidth,canvasHeight);
-    ctx.restore();
     
-    //draw bars
-    ctx.save();
-    ctx.fillStyle = barInfo.fillStyle;
-    ctx.strokeStyle = barInfo.strokeStyle;
-
-    for(let i=0; i < audioData.length; i++)
-    {
-        ctx.fillRect(barInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + barInfo.travelDistance * (256-audioData[i])/256,barInfo.barWidth,barInfo.barHeight);
-        ctx.strokeRect(barInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + barInfo.travelDistance * (256-audioData[i]),barInfo.barWidth,barInfo.barHeight);
-    }
-    ctx.restore();
-
-    //draw star cutout
-    ctx.save();
-    ctx.drawImage(imgaeArray[1],0,0,canvasWidth,canvasHeight);
-    ctx.restore();
-    
-
-    
-
-
 
 
     // 6 - bitmap manipulation
@@ -163,4 +133,63 @@ function draw(params={},imgaeArray){
 	ctx.putImageData(imageData,0,0);
 }
 
-export {setupCanvas,draw};
+function drawPyre(imageArray)
+{
+    //draw background
+    ctx.save();
+    ctx.fillStyle = barInfo.backgroundColor;
+    ctx.fillRect(0,0,canvasWidth,canvasHeight);
+    ctx.restore();
+
+
+    // draw circles
+    let maxRadius = canvasHeight/3;
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    for(let i=0; i<audioData.length; i++)
+    {
+        let percent = audioData[i] / 255;
+        let circleRadius = percent * maxRadius;
+        //blue circles
+        ctx.beginPath();
+        ctx.fillStyle = utils.makeColor(0,138,239,.25 - percent /3.0);
+        ctx.arc(125,500, circleRadius * 1.5 ,0,2*Math.PI,false);
+        ctx.fill();
+        ctx.closePath();
+    }
+    ctx.restore()
+
+    //draw logo cutout
+    ctx.save();
+    ctx.drawImage(imageArray[0],0,0,canvasWidth,canvasHeight);
+    ctx.restore();
+
+    //draw bars
+    ctx.save();
+    ctx.fillStyle = barInfo.fillStyle;
+    ctx.strokeStyle = barInfo.strokeStyle;
+
+    for(let i=0; i < audioData.length; i++)
+    {
+        ctx.fillRect(pyreInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + barInfo.travelDistance * (256-audioData[i])/256,barInfo.barWidth,barInfo.barHeight);
+        ctx.strokeRect(barInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + barInfo.travelDistance * (256-audioData[i]),barInfo.barWidth,barInfo.barHeight);
+    }
+    ctx.restore();
+
+    //draw star cutout
+    ctx.save();
+    ctx.drawImage(imageArray[1],0,0,canvasWidth,canvasHeight);
+    ctx.restore();
+
+}
+
+function updateDrawParams(params)
+{
+    if(params.drawType == 'pyre')
+    {
+        for(let i=0; i< pyreInfo.length; i++)
+        barInfo[i] = pyreInfo[i];
+    }
+}
+
+export {setupCanvas,draw,updateDrawParams};

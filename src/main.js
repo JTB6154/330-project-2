@@ -17,7 +17,8 @@ const drawParams = {
   showCircles   :true,
   showNoise     :false,
   showInvert    :false,
-  showEmboss    :false
+  showEmboss    :false,
+  drawType      :'pyre'
 }
 
 // 1 - here we are faking an enumeration
@@ -87,30 +88,19 @@ function setupUI(canvasElement){
 
   trackSelect.onchange = e => {
     audio.loadSoundFile(e.target.value)
+
+    if(e.innerHTML == 'Thrash Pack' ||e.innerHTML == 'Never to Return' || e.innerHTML == 'Dread Design')
+    {
+      drawParams.drawType = 'pyre';
+    }
     
+
+    canvas.updateDrawParams(drawParams);
     if(playbutton.dataset.playing = "yes")
     {
       playbutton.dispatchEvent(new MouseEvent("click"));
     }
   };
-
-  // const gradientCB = document.querySelector("#gradientCB");
-  //   gradientCB.checked = drawParams.showGradient;
-  //   gradientCB.onchange = e =>{
-  //   drawParams.showGradient = e.target.checked;
-  // };
-
-  // const barsCB = document.querySelector("#barsCB");
-  //   barsCB.checked = drawParams.showBars;
-  //   barsCB.onchange = e =>{
-  //   drawParams.showBars = e.target.checked;
-  // };
-
-  // const circlesCB = document.querySelector("#circlesCB");
-  //   circlesCB.checked = drawParams.showCircles;
-  //   circlesCB.onchange = e =>{
-  //   drawParams.showCircles = e.target.checked;
-  // };
 
   const noiseCB = document.querySelector("#noiseCB");
     noiseCB.checked = drawParams.showNoise;

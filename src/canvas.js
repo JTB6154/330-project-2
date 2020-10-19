@@ -43,6 +43,23 @@ const pyreInfo =
 
 };
 
+const ror2Info = 
+{
+    spacing : 4,
+    margin : 5,
+    startpos: 270,
+    endpos: 795,
+    width : 0,
+    barWidth : 0,
+    barHeight :300,
+    topSpacing: 0,
+    travelDistance: 325,
+    fillStyle : 'rgba(9,121,122,1)',
+    strokeStyle: 'rgba(0,0,0,0.50)',
+    backgroundColor: 'rgb(72,33,73)',
+
+};
+
 
 function setupCanvas(canvasElement,analyserNodeRef){
 	// create drawing context
@@ -76,7 +93,12 @@ function draw(params={},imageArray){
 	//analyserNode.getByteTimeDomainData(audioData); // waveform data
     if(params.drawType == 'pyre')
     {
-        drawPyre(imageArray)
+        drawPyre(imageArray);
+    }
+
+    if(params.drawType == 'ror2')
+    {
+        drawROR2(imageArray);
     }
 	
     
@@ -183,12 +205,23 @@ function drawPyre(imageArray)
 
 }
 
+function        drawROR2(imageArray)
+{
+
+}
+
 function updateDrawParams(params)
 {
     if(params.drawType == 'pyre')
     {
         for(let i=0; i< pyreInfo.length; i++)
         barInfo[i] = pyreInfo[i];
+    }
+
+    if(params.drawType == 'ror2')
+    {
+
+
     }
 }
 

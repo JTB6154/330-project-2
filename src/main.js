@@ -93,6 +93,10 @@ function setupUI(canvasElement){
     {
       drawParams.drawType = 'pyre';
     }
+    if(e.innerHTML == "You're Gonna Need a Bigger Ukulele")
+    {
+      drawParams.drawType = 'ror2';
+    }
     
 
     canvas.updateDrawParams(drawParams);

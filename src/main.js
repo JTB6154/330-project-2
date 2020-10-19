@@ -25,7 +25,10 @@ const DEFAULTS = Object.freeze({
 	sound1  :  "media/Thrash Pack.mp3"
 });
 
-function init(){
+let importedImages;
+
+function init(Images){
+  importedImages = Images;
   audio.setupWebAudio(DEFAULTS.sound1)
 	console.log("init called");
 	//console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
@@ -97,11 +100,11 @@ function setupUI(canvasElement){
   //   drawParams.showGradient = e.target.checked;
   // };
 
-  const barsCB = document.querySelector("#barsCB");
-    barsCB.checked = drawParams.showBars;
-    barsCB.onchange = e =>{
-    drawParams.showBars = e.target.checked;
-  };
+  // const barsCB = document.querySelector("#barsCB");
+  //   barsCB.checked = drawParams.showBars;
+  //   barsCB.onchange = e =>{
+  //   drawParams.showBars = e.target.checked;
+  // };
 
   // const circlesCB = document.querySelector("#circlesCB");
   //   circlesCB.checked = drawParams.showCircles;
@@ -133,7 +136,7 @@ function setupUI(canvasElement){
 function loop(){
     requestAnimationFrame(loop);
 
-    canvas.draw(drawParams);
+    canvas.draw(drawParams,importedImages);
   }
 
 export {init};

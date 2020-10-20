@@ -1,7 +1,7 @@
 import * as main from "./main.js";
 
 window.onload = ()=>{
-	let imageUrls = ["media/pyre-logo-cutout.png","media/pyre-star-cutout.png"];
+	let imageUrls = ["media/pyre-logo-cutout.png","media/pyre-star-cutout.png","media/risk-of-rain-2-cutout.png","media/risk-of-rain-2-switch-hero.jpg"];
 	console.log("window.onload called");
 	// 1 - do preload here - load fonts, images, additional sounds, etc...
 

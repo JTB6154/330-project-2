@@ -10,21 +10,6 @@
 import * as utils from './utils.js';
 
 let ctx,canvasWidth,canvasHeight,gradient,analyserNode,audioData;
-const barInfo =
-{
-    spacing : 4,
-    margin : 5,
-    startpos: 270,
-    endpos: 795,
-    width : 0,
-    barWidth : 0,
-    barHeight :300,
-    topSpacing: 440,
-    travelDistance: 100,
-    fillStyle : 'rgba(202,23,62,1)',
-    strokeStyle: 'rgba(0,0,0,0.50)',
-    backgroundColor: 'rgb(9,13,33)'
-};
 
 const pyreInfo = 
 {
@@ -45,19 +30,18 @@ const pyreInfo =
 
 const ror2Info = 
 {
-    spacing : 4,
-    margin : 5,
-    startpos: 270,
-    endpos: 795,
+    spacing : 5,
+    centerX: 500,
+    centerY: 500,
+    innerRadius: 150,
+    outerRadius: 600,
+    minTheta: 0,
+    maxTheta: Math.PI,
     width : 0,
     barWidth : 0,
-    barHeight :300,
-    topSpacing: 0,
-    travelDistance: 325,
-    fillStyle : 'rgba(9,121,122,1)',
+    fillStyle : 'rgb(72,33,73)',
     strokeStyle: 'rgba(0,0,0,0.50)',
     backgroundColor: 'rgb(72,33,73)',
-
 };
 
 
@@ -73,17 +57,13 @@ function setupCanvas(canvasElement,analyserNodeRef){
 	// this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize/2);
     
-    barInfo.width = (barInfo.endpos - barInfo.startpos) - (audioData.length * barInfo.spacing) - barInfo.margin * 2;
-    barInfo.barWidth = barInfo.width / audioData.length;
-    pyreInfo.width = (pyreInfo.endpos - pyreInfo.startpos) - (audioData.length * barInfo.spacing) - pyreInfo.margin * 2;
+
+    pyreInfo.width = (pyreInfo.endpos - pyreInfo.startpos) - (audioData.length * pyreInfo.spacing) - pyreInfo.margin * 2;
     pyreInfo.barWidth = pyreInfo.width / audioData.length;
+    ror2Info.width = (ror2Info.outerRadius - ror2Info.innerRadius) - (audioData.length * ror2Info.spacing);
+    ror2Info.barWidth = ror2Info.width / audioData.length;
 }
 
-function getWidth(info)
-{
-    info.width = (info.endpos - info.startpos) - (audioData.length * info.spacing) - info.margin * 2;
-    info.barWidth = barInfo.width / audioData.length;
-}
 
 function draw(params={},imageArray){
   // 1 - populate the audioData array with the frequency data from the analyserNode
@@ -158,10 +138,7 @@ function draw(params={},imageArray){
 function drawPyre(imageArray)
 {
     //draw background
-    ctx.save();
-    ctx.fillStyle = barInfo.backgroundColor;
-    ctx.fillRect(0,0,canvasWidth,canvasHeight);
-    ctx.restore();
+    cls(pyreInfo.backgroundColor);
 
 
     // draw circles
@@ -188,13 +165,13 @@ function drawPyre(imageArray)
 
     //draw bars
     ctx.save();
-    ctx.fillStyle = barInfo.fillStyle;
-    ctx.strokeStyle = barInfo.strokeStyle;
+    ctx.fillStyle = pyreInfo.fillStyle;
+    ctx.strokeStyle = pyreInfo.strokeStyle;
 
     for(let i=0; i < audioData.length; i++)
     {
-        ctx.fillRect(pyreInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + barInfo.travelDistance * (256-audioData[i])/256,barInfo.barWidth,barInfo.barHeight);
-        ctx.strokeRect(barInfo.startpos + barInfo.margin + i * (barInfo.barWidth + barInfo.spacing), barInfo.topSpacing + barInfo.travelDistance * (256-audioData[i]),barInfo.barWidth,barInfo.barHeight);
+        ctx.fillRect(pyreInfo.startpos + pyreInfo.margin + i * (pyreInfo.barWidth + pyreInfo.spacing), pyreInfo.topSpacing + pyreInfo.travelDistance * (256-audioData[i])/256,pyreInfo.barWidth,pyreInfo.barHeight);
+        ctx.strokeRect(pyreInfo.startpos + pyreInfo.margin + i * (pyreInfo.barWidth + pyreInfo.spacing), pyreInfo.topSpacing + pyreInfo.travelDistance * (256-audioData[i]),pyreInfo.barWidth,pyreInfo.barHeight);
     }
     ctx.restore();
 
@@ -205,24 +182,41 @@ function drawPyre(imageArray)
 
 }
 
-function        drawROR2(imageArray)
+function drawROR2(imageArray)
 {
+    //draw the background color
+    cls(ror2Info.backgroundColor)
+    ctx.drawImage(imageArray[3],0,0,canvasWidth,canvasHeight);
+    ctx.save();
+    ctx.fillStyle = ror2Info.fillStyle;
+
+    for(let i=0; i <audioData.length; i++)
+    {
+        //draw outer circle
+        let percent = audioData[i]/256;
+        //ctx.arc(x,y,radius,start angle,end angle , false = ccw);
+        let outerRadius = ror2Info.innerRadius + i * (ror2Info.barWidth + ror2Info.spacing);
+        let innerRadius = outerRadius - ror2Info.spacing;
+        let angle = percent * ror2Info.maxTheta + ror2Info.minTheta;
+        ctx.beginPath();
+        ctx.arc(ror2Info.centerX,ror2Info.centerY,innerRadius, Math.PI,angle + Math.PI,false);
+        ctx.arc(ror2Info.centerX,ror2Info.centerY,outerRadius, angle + Math.PI,Math.PI,true);
+        ctx.fill();
+        ctx.closePath();
+        //clip with inner circle
+    }
+    ctx.restore();
+    ctx.drawImage(imageArray[2],0,0,canvasWidth,canvasHeight);
+
 
 }
 
-function updateDrawParams(params)
-{
-    if(params.drawType == 'pyre')
-    {
-        for(let i=0; i< pyreInfo.length; i++)
-        barInfo[i] = pyreInfo[i];
-    }
-
-    if(params.drawType == 'ror2')
-    {
-
-
-    }
+function cls(backgroundColor = 'black')
+{    //draw background
+    ctx.save();
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0,0,canvasWidth,canvasHeight);
+    ctx.restore();
 }
 
-export {setupCanvas,draw,updateDrawParams};
+export {setupCanvas,draw};

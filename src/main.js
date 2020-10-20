@@ -89,17 +89,17 @@ function setupUI(canvasElement){
   trackSelect.onchange = e => {
     audio.loadSoundFile(e.target.value)
 
-    if(e.innerHTML == 'Thrash Pack' ||e.innerHTML == 'Never to Return' || e.innerHTML == 'Dread Design')
+    if(e.target.selectedIndex < 3)
     {
       drawParams.drawType = 'pyre';
     }
-    if(e.innerHTML == "You're Gonna Need a Bigger Ukulele")
+    else if(e.target.selectedIndex < 6)
     {
       drawParams.drawType = 'ror2';
     }
     
 
-    canvas.updateDrawParams(drawParams);
+    // canvas.updateDrawParams(drawParams);
     if(playbutton.dataset.playing = "yes")
     {
       playbutton.dispatchEvent(new MouseEvent("click"));

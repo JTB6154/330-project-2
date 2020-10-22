@@ -25,14 +25,20 @@ const pyreInfo =
     fillStyle : 'rgba(202,23,62,1)',
     strokeStyle: 'rgba(0,0,0,0.50)',
     backgroundColor: 'rgb(9,13,33)',
-
+    starX:          600,
+    starY:          200,
+    starDotRadius: 12,
+    starPointWidth: 10,
+    starCircle: 5,
+    starColor: 'rgb(233,220,220)',
+    strokeWidth: 1,
 };
 
 const ror2Info = 
 {
-    spacing : 5,
+    spacing : 2,
     centerX: 500,
-    centerY: 500,
+    centerY: 450,
     innerRadius: 150,
     outerRadius: 600,
     minTheta: 0,
@@ -164,20 +170,40 @@ function drawPyre(imageArray)
     ctx.restore();
 
     //draw bars
-    ctx.save();
-    ctx.fillStyle = pyreInfo.fillStyle;
-    ctx.strokeStyle = pyreInfo.strokeStyle;
-
     for(let i=0; i < audioData.length; i++)
     {
-        ctx.fillRect(pyreInfo.startpos + pyreInfo.margin + i * (pyreInfo.barWidth + pyreInfo.spacing), pyreInfo.topSpacing + pyreInfo.travelDistance * (256-audioData[i])/256,pyreInfo.barWidth,pyreInfo.barHeight);
-        ctx.strokeRect(pyreInfo.startpos + pyreInfo.margin + i * (pyreInfo.barWidth + pyreInfo.spacing), pyreInfo.topSpacing + pyreInfo.travelDistance * (256-audioData[i]),pyreInfo.barWidth,pyreInfo.barHeight);
-    }
-    ctx.restore();
+        ctx.save();
+        ctx.fillStyle = pyreInfo.fillStyle;
+        ctx.strokeStyle = pyreInfo.strokeStyle;
 
-    //draw star cutout
+        ctx.beginPath()
+        ctx.rect(pyreInfo.startpos + pyreInfo.margin + i * (pyreInfo.barWidth + pyreInfo.spacing), pyreInfo.topSpacing + pyreInfo.travelDistance * (256-audioData[i])/256,pyreInfo.barWidth,pyreInfo.barHeight)
+        ctx.stroke();
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.restore();
+    }
+
+    //draw top layer
     ctx.save();
     ctx.drawImage(imageArray[1],0,0,canvasWidth,canvasHeight);
+    ctx.restore();
+
+    //draw star
+    ctx.save();
+    ctx.fillStyle = drawPyre.fillStyle;
+    ctx.strokeStyle = drawPyre.starColor;
+    ctx.strokeWidth = drawPyre.strokeWidth;
+
+    ctx.translate(-pyreInfo.starX,-pyreInfo.starY);
+
+    ctx.beginPath();
+    ctx.arc(0,0,pyreInfo.starDotRadius, 0,2* Math.PI,false);
+    ctx.fill();
+    ctx.closePath();
+    
+
     ctx.restore();
 
 }
@@ -196,11 +222,11 @@ function drawROR2(imageArray)
         let percent = audioData[i]/256;
         //ctx.arc(x,y,radius,start angle,end angle , false = ccw);
         let outerRadius = ror2Info.innerRadius + i * (ror2Info.barWidth + ror2Info.spacing);
-        let innerRadius = outerRadius - ror2Info.spacing;
+        let innerRadius = outerRadius - ror2Info.barWidth;
         let angle = percent * ror2Info.maxTheta + ror2Info.minTheta;
         ctx.beginPath();
         ctx.arc(ror2Info.centerX,ror2Info.centerY,innerRadius, Math.PI,angle + Math.PI,false);
-        ctx.arc(ror2Info.centerX,ror2Info.centerY,outerRadius, angle + Math.PI,Math.PI,true);
+        ctx.arc(ror2Info.centerX,ror2Info.centerY,outerRadius, angle + Math.PI, Math.PI,true);
         ctx.fill();
         ctx.closePath();
         //clip with inner circle

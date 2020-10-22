@@ -75,7 +75,7 @@ const hkInfo =
     fillStyle : 'rgb(72,33,73)',
     strokeStyle: 'rgba(0,0,0,0.50)',
     backgroundColor: 'rgb(0,0,0)',
-    gradients: [[{color: 'rgb(255,100,110)',percent: 0},{color: 'rgb(118,26,53)', percent: 1}],[],[]],
+    gradients: [[{color: 'rgb(255,100,110)',percent: 0},{color: 'rgb(118,26,53)', percent: 1}],[{color: 'rgb(100,255,110)',percent: 0},{color: 'rgb(26,118,53)', percent: 1}],[{color: 'rgb(255,255,255)',percent: 0},{color: 'rgb(118,118,118)', percent: 1}]],
     gradient,
     gradientIndex :0
 }

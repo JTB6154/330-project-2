@@ -97,6 +97,10 @@ function setupUI(canvasElement){
     {
       drawParams.drawType = 'ror2';
     }
+    else
+    {
+      drawParams.drawType = 'hk';
+    }
     
 
     // canvas.updateDrawParams(drawParams);
@@ -105,12 +109,6 @@ function setupUI(canvasElement){
       playbutton.dispatchEvent(new MouseEvent("click"));
     }
   };
-
-  const noiseCB = document.querySelector("#noiseCB");
-    noiseCB.checked = drawParams.showNoise;
-    noiseCB.onchange = e =>{
-    drawParams.showNoise = e.target.checked;
-  }
 
   const invertCB = document.querySelector("#invertCB");
     invertCB.checked = drawParams.showInvert;

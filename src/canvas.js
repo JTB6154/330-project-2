@@ -15,7 +15,7 @@ const pyreInfo =
 {
     spacing : 4,
     margin : 5,
-    startpos: 270,
+    startpos: 244,
     endpos: 795,
     width : 0,
     barWidth : 0,
@@ -25,13 +25,24 @@ const pyreInfo =
     fillStyle : 'rgba(202,23,62,1)',
     strokeStyle: 'rgba(0,0,0,0.50)',
     backgroundColor: 'rgb(9,13,33)',
-    starX:          600,
-    starY:          200,
-    starDotRadius: 12,
-    starPointWidth: 10,
-    starCircle: 5,
-    starColor: 'rgb(233,220,220)',
-    strokeWidth: 1,
+    // starX:          600,
+    // starY:          200,
+    // starDotRadius: 12,
+    // starPointWidth: 10,
+    // starCircle: 5,
+    // starColor: 'rgb(233,220,220)',
+    // strokeWidth: 1,
+    sinusoidFrequency1: 5,
+    sinusoidFrequency2: 26,
+    sinusoidFrequency3: 35,
+    sinusoid1Width: 45,
+    sinusoid2Width: 27,
+    sinusoid3Width: 10,
+    sinusoid1Stroke: 'rgba(0,138,239,1)',
+    sinusoid2Stroke: 'rgba(167,64,191,1)',
+    sinusoid3Stroke: 'rgba(185,185,185,1)',
+    sinusoidY:500,
+    sinusoidMaxDistance: 75
 };
 
 const ror2Info = 
@@ -50,6 +61,20 @@ const ror2Info =
     backgroundColor: 'rgb(72,33,73)',
 };
 
+const hkInfo = 
+{
+    startpos: 0,
+    endpos: 551,
+    spacing : 2,
+    barY: 0,
+    width : 0,
+    barWidth : 0,
+    fillStyle : 'rgb(72,33,73)',
+    strokeStyle: 'rgba(0,0,0,0.50)',
+    backgroundColor: 'rgb(0,0,0)',
+    gradient,
+}
+
 
 function setupCanvas(canvasElement,analyserNodeRef){
 	// create drawing context
@@ -62,10 +87,10 @@ function setupCanvas(canvasElement,analyserNodeRef){
 	analyserNode = analyserNodeRef;
 	// this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize/2);
-    
 
     pyreInfo.width = (pyreInfo.endpos - pyreInfo.startpos) - (audioData.length * pyreInfo.spacing) - pyreInfo.margin * 2;
     pyreInfo.barWidth = pyreInfo.width / audioData.length;
+
     ror2Info.width = (ror2Info.outerRadius - ror2Info.innerRadius) - (audioData.length * ror2Info.spacing);
     ror2Info.barWidth = ror2Info.width / audioData.length;
 }
@@ -85,6 +110,11 @@ function draw(params={},imageArray){
     if(params.drawType == 'ror2')
     {
         drawROR2(imageArray);
+    }
+
+    if(params.drawType == 'hk')
+    {
+        drawHK(imageArray);
     }
 	
     
@@ -185,26 +215,41 @@ function drawPyre(imageArray)
         ctx.restore();
     }
 
+    //draw sinusoids
+
+    let percent = utils.getFrequencyPercent(audioData[pyreInfo.sinusoidFrequency1]);
+    let yDistance = percent * pyreInfo.sinusoidMaxDistance;
+    drawSinusoid(pyreInfo.startpos,pyreInfo.endpos,pyreInfo.sinusoidY,yDistance,pyreInfo.sinusoid1Width,pyreInfo.sinusoid1Stroke,2);
+
+    percent = utils.getFrequencyPercent(audioData[pyreInfo.sinusoidFrequency2]);
+    yDistance = percent*pyreInfo.sinusoidMaxDistance;
+    drawSinusoid(pyreInfo.startpos,pyreInfo.endpos,pyreInfo.sinusoidY,-yDistance,pyreInfo.sinusoid2Width,pyreInfo.sinusoid2Stroke,3);
+
+    percent = utils.getFrequencyPercent(audioData[pyreInfo.sinusoidFrequency3]);
+    yDistance = percent * pyreInfo.sinusoidMaxDistance;
+    drawSinusoid(pyreInfo.startpos,pyreInfo.endpos,pyreInfo.sinusoidY,yDistance,pyreInfo.sinusoid3Width,pyreInfo.sinusoid3Stroke,5);
+    
+
     //draw top layer
     ctx.save();
     ctx.drawImage(imageArray[1],0,0,canvasWidth,canvasHeight);
     ctx.restore();
 
-    //draw star
-    ctx.save();
-    ctx.fillStyle = drawPyre.fillStyle;
-    ctx.strokeStyle = drawPyre.starColor;
-    ctx.strokeWidth = drawPyre.strokeWidth;
+    //draw star - currently dropped, may return for final product
+    // ctx.save();
+    // ctx.fillStyle = drawPyre.fillStyle;
+    // ctx.strokeStyle = drawPyre.starColor;
+    // ctx.strokeWidth = drawPyre.strokeWidth;
 
-    ctx.translate(-pyreInfo.starX,-pyreInfo.starY);
+    // //ctx.translate(-pyreInfo.starX,-pyreInfo.starY);
 
-    ctx.beginPath();
-    ctx.arc(0,0,pyreInfo.starDotRadius, 0,2* Math.PI,false);
-    ctx.fill();
-    ctx.closePath();
-    
+    // ctx.beginPath();
+    // ctx.arc(0,0,pyreInfo.starDotRadius, 0, 2* Math.PI,false);
+    // ctx.fill();
+    // ctx.closePath();
+    // ctx.restore();
 
-    ctx.restore();
+
 
 }
 
@@ -233,7 +278,33 @@ function drawROR2(imageArray)
     }
     ctx.restore();
     ctx.drawImage(imageArray[2],0,0,canvasWidth,canvasHeight);
+}
 
+function drawHK(imageArray)
+{
+    cls(hkInfo.backgroundColor);
+}
+
+function drawSinusoid(startX,endX,y,amplitude,frequency,strokeStyle,strokeWidth)
+{
+    ctx.save();
+    let currentX = 0;
+    ctx.beginPath();
+    ctx.strokeStyle = strokeStyle;
+    ctx.strokeWidth = strokeWidth;
+    ctx.moveTo(startX,y);
+    while(currentX + startX < endX)
+    {
+        ctx.quadraticCurveTo(startX + currentX + frequency/2, amplitude + y,startX + currentX + frequency,y);
+        currentX += frequency;
+        ctx.quadraticCurveTo(startX + currentX + frequency/2, -amplitude + y,startX + currentX + frequency,y);
+        currentX +=frequency;
+    }
+    ctx.stroke();
+    ctx.closePath();
+
+
+    ctx.restore();
 
 }
 

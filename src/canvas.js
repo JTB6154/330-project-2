@@ -278,23 +278,30 @@ function drawROR2(imageArray)
 
 function drawHK(imageArray,drawParams)
 {
+
+    //update gradient if need be
     if(drawParams.hkIndex != hkInfo.gradientIndex)
     {
         hkInfo.gradientIndex = drawParams.hkIndex;
         updateHKGradient();
     }
-    cls(hkInfo.backgroundColor);
+    //not currently in use
+    //cls(hkInfo.backgroundColor);
 
+    //draw background image
     ctx.drawImage(imageArray[4],0,0,canvasWidth,canvasHeight);
 
     ctx.save();
 
-    //ctx.translate(400,200);
+    //move and rotate canvas
     ctx.rotate(-2 * Math.PI / 9);
     ctx.translate(350,650);
+    //draw bars
     drawHorizontalBars(audioData,hkInfo.gradient,'black',-hkInfo.endpos/2,hkInfo.margin,hkInfo.barWidth,hkInfo.barHeight,hkInfo.spacing,hkInfo.barY,hkInfo.maxYDistance,128);
-
+    //undo move and rotate
     ctx.restore();
+
+    ctx.drawImage(imageArray[5],0,0,canvasWidth,canvasHeight);
 }
 
 function drawHorizontalBars(audioData,fillStyle,strokeStyle,startpos,margin,barWidth,barHeight,spacing,topSpacing,travelDistance,audioDataPercentOf = 256)

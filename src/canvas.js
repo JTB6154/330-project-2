@@ -64,15 +64,20 @@ const ror2Info =
 const hkInfo = 
 {
     startpos: 0,
+    margin : 5,
     endpos: 551,
     spacing : 2,
     barY: 0,
+    maxYDistance: 100,
     width : 0,
     barWidth : 0,
+    barHeight: 400,
     fillStyle : 'rgb(72,33,73)',
     strokeStyle: 'rgba(0,0,0,0.50)',
     backgroundColor: 'rgb(0,0,0)',
+    gradients: [[{color: 'rgb(255,100,110)',percent: 0},{color: 'rgb(118,26,53)', percent: 1}],[],[]],
     gradient,
+    gradientIndex :0
 }
 
 
@@ -93,6 +98,10 @@ function setupCanvas(canvasElement,analyserNodeRef){
 
     ror2Info.width = (ror2Info.outerRadius - ror2Info.innerRadius) - (audioData.length * ror2Info.spacing);
     ror2Info.barWidth = ror2Info.width / audioData.length;
+
+    hkInfo.width = (hkInfo.endpos - hkInfo.startpos) - (audioData.length * hkInfo.spacing) - hkInfo.margin * 2;
+    hkInfo.barWidth = hkInfo.width / audioData.length;
+    updateHKGradient();
 }
 
 
@@ -114,7 +123,7 @@ function draw(params={},imageArray){
 
     if(params.drawType == 'hk')
     {
-        drawHK(imageArray);
+        drawHK(imageArray,params);
     }
 	
     
@@ -200,20 +209,7 @@ function drawPyre(imageArray)
     ctx.restore();
 
     //draw bars
-    for(let i=0; i < audioData.length; i++)
-    {
-        ctx.save();
-        ctx.fillStyle = pyreInfo.fillStyle;
-        ctx.strokeStyle = pyreInfo.strokeStyle;
-
-        ctx.beginPath()
-        ctx.rect(pyreInfo.startpos + pyreInfo.margin + i * (pyreInfo.barWidth + pyreInfo.spacing), pyreInfo.topSpacing + pyreInfo.travelDistance * (256-audioData[i])/256,pyreInfo.barWidth,pyreInfo.barHeight)
-        ctx.stroke();
-        ctx.fill();
-        ctx.closePath();
-
-        ctx.restore();
-    }
+    drawHorizontalBars(audioData,pyreInfo.fillStyle,pyreInfo.strokeStyle,pyreInfo.startpos,pyreInfo.margin,pyreInfo.barWidth,pyreInfo.barHeight,pyreInfo.spacing,pyreInfo.topSpacing,pyreInfo.travelDistance)
 
     //draw sinusoids
 
@@ -280,9 +276,43 @@ function drawROR2(imageArray)
     ctx.drawImage(imageArray[2],0,0,canvasWidth,canvasHeight);
 }
 
-function drawHK(imageArray)
+function drawHK(imageArray,drawParams)
 {
+    if(drawParams.hkIndex != hkInfo.gradientIndex)
+    {
+        hkInfo.gradientIndex = drawParams.hkIndex;
+        updateHKGradient();
+    }
     cls(hkInfo.backgroundColor);
+
+    ctx.drawImage(imageArray[4],0,0,canvasWidth,canvasHeight);
+
+    ctx.save();
+
+    //ctx.translate(400,200);
+    ctx.rotate(-2 * Math.PI / 9);
+    ctx.translate(350,650);
+    drawHorizontalBars(audioData,hkInfo.gradient,'black',-hkInfo.endpos/2,hkInfo.margin,hkInfo.barWidth,hkInfo.barHeight,hkInfo.spacing,hkInfo.barY,hkInfo.maxYDistance,128);
+
+    ctx.restore();
+}
+
+function drawHorizontalBars(audioData,fillStyle,strokeStyle,startpos,margin,barWidth,barHeight,spacing,topSpacing,travelDistance,audioDataPercentOf = 256)
+{
+    for(let i=0; i < audioData.length; i++)
+    {
+        ctx.save();
+        ctx.fillStyle = fillStyle;
+        ctx.strokeStyle = strokeStyle;
+
+        ctx.beginPath()
+        ctx.rect(startpos + margin + i * (barWidth + spacing), topSpacing + travelDistance * (audioDataPercentOf-audioData[i])/audioDataPercentOf,barWidth,barHeight)
+        ctx.stroke();
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.restore();
+    }
 }
 
 function drawSinusoid(startX,endX,y,amplitude,frequency,strokeStyle,strokeWidth)
@@ -306,6 +336,11 @@ function drawSinusoid(startX,endX,y,amplitude,frequency,strokeStyle,strokeWidth)
 
     ctx.restore();
 
+}
+
+function updateHKGradient()
+{
+    hkInfo.gradient = utils.getLinearGradient(ctx,hkInfo.startpos,hkInfo.barY,hkInfo.startpos,hkInfo.barY + hkInfo.maxYDistance,hkInfo.gradients[hkInfo.gradientIndex]);
 }
 
 function cls(backgroundColor = 'black')

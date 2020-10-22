@@ -18,7 +18,8 @@ const drawParams = {
   showNoise     :false,
   showInvert    :false,
   showEmboss    :false,
-  drawType      :'pyre'
+  drawType      :'pyre',
+  hkIndex       :1
 }
 
 // 1 - here we are faking an enumeration
@@ -100,6 +101,7 @@ function setupUI(canvasElement){
     else
     {
       drawParams.drawType = 'hk';
+      drawParams.hkIndex = e.target.selectedIndex - 6;
     }
     
 

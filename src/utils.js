@@ -41,6 +41,14 @@ const makeColor = (red, green, blue, alpha = 1) => {
   const getFrequencyPercent = (value) =>
   {
     return value/256;
+  };
+
+  const setToValue = (array,value,startIndex,numValues) =>
+  {
+    for(let j=0; j<numValues;j++)
+    {
+      array[startIndex + j] = value;
+    }
   }
   
-  export {makeColor, getRandomColor, getLinearGradient, goFullscreen,getFrequencyPercent};
+  export {makeColor, getRandomColor, getLinearGradient, goFullscreen,getFrequencyPercent,setToValue};

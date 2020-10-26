@@ -80,6 +80,12 @@ const hkInfo =
     gradientIndex :0
 }
 
+const colorThreshholds = 
+{
+    red: 160,
+    blue: 120,
+    green: 95
+}
 
 function setupCanvas(canvasElement,analyserNodeRef){
 	// create drawing context
@@ -144,24 +150,44 @@ function draw(params={},imageArray){
     let width = imageData.width
     
 	// B) Iterate through each pixel, stepping 4 elements at a time (which is the RGBA for 1 pixel)
-    for(let i=0 ; i<length; i+=4){
-		// C) randomly change every 20th pixel to red
-        if(params.showNoise && Math.random() < 0.05){
-			// data[i] is the red channel
-			// data[i+1] is the green channel
-			// data[i+2] is the blue channel
-			// data[i+3] is the alpha channel
-			data[i] = data[i + 1] = data[i+2] = 0;// zero out the red and green and blue channels
-			data[i] = 255;// make the red channel 100% red
-        
-        } // end if
-        
+    for(let i=0 ; i<length; i+=4){ 
+        let red = data[i], green = data[i+1], blue = data[i+2]
+        let avg = (data[i] + data[i+1] + data[i+2])/3       
         if(params.showInvert){
-            let red = data[i], green = data[i+1], blue = data[i+2]
             data[i] = 255-red;
             data[i+1] = 255-green;
             data[i+2] = 255-blue;
         }//end if
+
+        if(params.showGrayScale)
+        {
+            utils.setToValue(data,avg,i,3);
+        }
+
+        if(params.redFilter)
+        {
+            if(red < colorThreshholds.red || blue >= red || green >= red ) utils.setToValue(data,avg,i,3);
+            else{
+                data[i+1] = avg;
+                data[i+2] =avg;
+            }
+        }
+        if(params.greenFilter )
+        {
+            if( green < colorThreshholds.green || blue >= green || red >= green ) utils.setToValue(data,avg,i,3);
+            else{ 
+                data[i] = avg;
+                data[i+2] = avg;
+            }
+        }
+        if(params.blueFilter)
+        {
+            if (blue < colorThreshholds.blue || red >= blue || green >= blue )utils.setToValue(data,avg,i,3);
+            else{
+                data[i] = avg;
+                data[i+1] = avg;
+            }
+        }
     }// end for
     
 
@@ -196,7 +222,7 @@ function drawPyre(imageArray)
         let circleRadius = percent * maxRadius;
         //blue circles
         ctx.beginPath();
-        ctx.fillStyle = utils.makeColor(0,138,239,.25 - percent /3.0);
+        ctx.fillStyle = utils.makeColor(10,138,239,.25 - percent /3.0);
         ctx.arc(125,500, circleRadius * 1.5 ,0,2*Math.PI,false);
         ctx.fill();
         ctx.closePath();

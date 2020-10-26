@@ -10,10 +10,12 @@
 <main>
 	<canvas width="960" height="540"></canvas>
 	<div id="controls">
+		<h1>Controls</h1>
 		<section>
-			<button id="playButton" data-playing="no"></button>
-			<button id="fsButton">Full Screen</button>
-		
+			<Audio controls src="" allow="autoplay"></Audio>
+		</section>
+		<!-- <button id="playButton" data-playing="no"></button> -->
+		<section>
 			<label>Track: 
 				<select id="trackSelect">
 					<option value="media/Thrash Pack.mp3" selected>Thrash Pack</option>
@@ -24,23 +26,29 @@
 					<option value="media/Antarctic Oscillation.mp3">Antarctic Oscillation</option>
 					<option value="media/Nightmare King.mp3">Nightmare King</option>
 					<option value="media/Greenpath.mp3">Greenpath</option>
-					<option value="media/Pure Vessel.mp3">Pure Vessel</option>
-
-					
+					<option value="media/Pure Vessel.mp3">Pure Vessel</option>					
 				</select>
 			</label>
-		</section>
-		
-		<section>
+			<button id="fsButton">Full Screen</button>
+		</section>	
+		<!-- <section>
 			Volume: <input type="range" id="volumeSlider" min="0" max="2" value=".05" step="0.01">
 			<span id="volumeLabel">???</span>
-		</section>
+		</section> -->
 
 		<section>
-			<span><input type="checkbox" id="invertCB"><label for="invertCB">Show Invert</label></span>
-			<span><input type="checkbox" id="embossCB"><label for="embossCB">Show Emboss</label></span>
-
-		  </section>
+			<h1>Effects</h1>
+			<span><input type="checkbox" id="invertCB"><label for="invertCB">Invert</label></span>
+			<span><input type="checkbox" id="embossCB"><label for="embossCB">Emboss</label></span>
+			<span><input type="checkbox" id="grayscaleCB"><label for="grayscaleCB">Gray Scale</label></span>
+		</section>
+		<section>
+			<h1>Color selection</h1>
+			<span><input type="radio" id="allRB" name = "color"><label for="allRB">All</label></span>
+			<span><input type="radio" id="redRB" name = "color"><label for="redRB">Red</label></span>
+			<span><input type="radio" id="blueRB" name = "color"><label for="blueRB">Blue</label></span>
+			<span><input type="radio" id="greenRB" name = "color"><label for="greenRB">Green</label></span>
+		</section>
 	</div>
 	<p>the plan is to do like three different versions of this, and alternate between them based on the track</p>
 </main>

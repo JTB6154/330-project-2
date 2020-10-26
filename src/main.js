@@ -12,16 +12,15 @@ import * as audio from './audio.js';
 import * as canvas from './canvas.js';
 
 const drawParams = {
-  showGradient  :true,
-  showBars      :true,
-  showCircles   :true,
-  showNoise     :false,
   showInvert    :false,
   showEmboss    :false,
+  showGrayScale :false,
   drawType      :'pyre',
-  hkIndex       :1
+  hkIndex       :1,
+  redFilter     :false,
+  blueFilter    :false,
+  greenFilter   :false
 }
-
 // 1 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
 	sound1  :  "media/Thrash Pack.mp3"
@@ -50,40 +49,6 @@ function setupUI(canvasElement){
     utils.goFullscreen(canvasElement);
   };
 
-
-  const playbutton = document.querySelector("#playButton")
-
-  playbutton.onclick = e =>{
-    console.log(`audioCTX.sate before = ${audio.audioCTX.state}`);
-    if(audio.audioCTX.state == "suspended"){ audio.audioCTX.resume(); }
-
-    console.log(`audioCTX.sate after = ${audio.audioCTX.state}`);
-    
-
-    if(e.target.dataset.playing == "no")
-    {
-      audio.playCurrentSound();
-      e.target.dataset.playing= "yes";
-    }else{
-      audio.pauseCurrentSound();
-      e.target.dataset.playing = "no";
-    }
-  };
-
-  //get the slider and label
-  const volumeSlider = document.querySelector("#volumeSlider");
-  const volumeLabel = document.querySelector("#volumeLabel");
-
-  //add oninput to the slider
-  volumeSlider.oninput = e => {
-    //set the gain
-    audio.setVolume(e.target.value);
-    //update the label
-    volumeLabel.innerHTML = Math.round((e.target.value/2*100));
-  };
-
-  volumeSlider.dispatchEvent(new Event("input"));
-
   //D - hookup track <select>
   let trackSelect = document.querySelector("#trackSelect");
 
@@ -103,28 +68,56 @@ function setupUI(canvasElement){
       drawParams.drawType = 'hk';
       drawParams.hkIndex = e.target.selectedIndex - 6;
     }
-    
-
-    // canvas.updateDrawParams(drawParams);
-    if(playbutton.dataset.playing = "yes")
-    {
-      playbutton.dispatchEvent(new MouseEvent("click"));
-    }
   };
 
+  //check box controls
   const invertCB = document.querySelector("#invertCB");
     invertCB.checked = drawParams.showInvert;
     invertCB.onchange = e =>{
     drawParams.showInvert = e.target.checked;
   }
-  
   const embossCB = document.querySelector("#embossCB");
     embossCB.checked = drawParams.showEmboss;
     embossCB.onchange = e =>{
     drawParams.showEmboss = e.target.checked;
   }
-  
-	
+  const grayScaleCB = document.querySelector("#grayscaleCB");
+    grayScaleCB.checked = drawParams.showGrayScale;
+    grayScaleCB.onchange = e =>{
+    drawParams.showGrayScale = e.target.checked;
+  }	
+
+  //radio button controls
+  const redRB = document.querySelector("#redRB");
+  redRB.checked = drawParams.redFilter;
+  redRB.onchange = e =>{
+    drawParams.redFilter = true;
+    drawParams.blueFilter = false;
+    drawParams.greenFilter = false;
+  }
+
+  const blueRB = document.querySelector("#blueRB");
+  blueRB.checked = drawParams.blueFilter;
+  blueRB.onchange = e =>{
+    drawParams.redFilter = false;
+    drawParams.blueFilter = true;
+    drawParams.greenFilter = false;
+  }
+  const greenRB = document.querySelector("#greenRB");
+  greenRB.checked = drawParams.greenFilter;
+  greenRB.onchange = e =>{
+    drawParams.redFilter = false;
+    drawParams.blueFilter = false;
+    drawParams.greenFilter = true;
+  }
+  const allRB = document.querySelector("#allRB");
+  allRB.checked = !(drawParams.greenFilter || drawParams.redFilter || drawParams.blueFilter);
+  allRB.onchange = e =>
+  {
+    drawParams.redFilter = false;
+    drawParams.blueFilter = false;
+    drawParams.greenFilter = false;
+  }
 } // end setupUI
 
 function loop(){

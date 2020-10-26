@@ -7,8 +7,9 @@ let _element, _sourceNode, analyserNode, _gainNode;
 
 // 3 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
-    gain        :       .5,
-    numSamples  :       128
+    gain            :       .5,
+    numSamples      :       128,
+    startingVolume   : .03
 })
 
 // 4 - create a new array of 8-bit integers (0-255)
@@ -22,8 +23,8 @@ function setupWebAudio(filePath){
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     audioCTX = new AudioContext();
     // 2 - this creates an <audio> element
-    _element = new Audio();
-
+    _element = document.querySelector("audio");
+    _element.volume = DEFAULTS.startingVolume;
     // 3 - have it point at a sound file
     loadSoundFile(filePath);
 

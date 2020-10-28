@@ -19,7 +19,9 @@ const drawParams = {
   hkIndex       :1,
   redFilter     :false,
   blueFilter    :false,
-  greenFilter   :false
+  greenFilter   :false,
+  distortion    :false,
+  colorThreshold: 240
 }
 // 1 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
@@ -48,6 +50,16 @@ function setupUI(canvasElement){
     console.log("init called");
     utils.goFullscreen(canvasElement);
   };
+
+  //hookup Color Threshhold
+  let threshholdSlider = document.querySelector("#colorCutoff");
+  threshholdSlider.value = drawParams.colorThreshold;
+  threshholdSlider.oninput = e =>
+  {
+    drawParams.colorThreshold = e.target.value;
+    document.querySelector("#cutoffLabel").innerHTML = e.target.value;
+  }
+  document.querySelector("#cutoffLabel").innerHTML = drawParams.colorThreshold;
 
   //D - hookup track <select>
   let trackSelect = document.querySelector("#trackSelect");
@@ -87,6 +99,14 @@ function setupUI(canvasElement){
     drawParams.showGrayScale = e.target.checked;
   }	
 
+  const distortionCB = document.querySelector("#distortionCB");
+    distortionCB.checked = drawParams.distortion;
+    distortionCB.onchange = e =>
+    {
+      drawParams.distortion = e.target.checked;
+      audio.toggleDistortion(e.target.checked);
+  }
+
   //radio button controls
   const redRB = document.querySelector("#redRB");
   redRB.checked = drawParams.redFilter;
@@ -95,7 +115,6 @@ function setupUI(canvasElement){
     drawParams.blueFilter = false;
     drawParams.greenFilter = false;
   }
-
   const blueRB = document.querySelector("#blueRB");
   blueRB.checked = drawParams.blueFilter;
   blueRB.onchange = e =>{

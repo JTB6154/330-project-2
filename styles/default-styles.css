@@ -1,18 +1,62 @@
-body {
-	background: #eeeeee;
-	font-family: tahoma, verdana, sans serif;
+*{
+  background-color: #fbfbfb;
 }
-
+header{
+  color:#EE6352 ;
+  padding: 0%;
+  margin: 0%;    
+  text-align: center;
+  font-size: 30pt;
+  font-family: 'Syne Mono', monospace;
+}
+h2,h3
+{
+ color: #3fa7d6;
+}
 canvas {
 	margin-left: 1rem;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 	box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
-	background: #fafafa;
+  background: #fafafa;
+}
+
+body{
+  width: 1000px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#canvas {
+  text-align: center;
+}
+
+main{
+  width: 960px;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+footer{
+  color: #2ab7ca;
+  font-size: .75em;
 }
 
 #controls{
-  margin-left: 1rem;
+  display: flex;
+  width: 50%;
+  margin-left: 30%;
+  text-align: center;
+}
+#colors{
+  display: flex;
+}
+#effects{
+  display: flex;
+}
+#distortions{
+  display: flex;
+  justify-content: space-evenly;
 }
 
 #volumeLabel{
@@ -21,19 +65,6 @@ canvas {
 
 section{
   margin-bottom: 1rem;
-}
-
-#playButton{
-  font-size: 1.2rem;
-  width: 6rem;
-}
-
-button[data-playing="yes"]:after{
-  content: "Pause";
-}
-
-button[data-playing="no"]:after{
-  content: "Play";
 }
 
 #fsButton{

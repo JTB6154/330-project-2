@@ -80,13 +80,6 @@ const hkInfo =
     gradientIndex :0
 }
 
-const colorThreshholds = 
-{
-    red: 160,
-    blue: 120,
-    green: 95
-}
-
 function setupCanvas(canvasElement,analyserNodeRef){
 	// create drawing context
 	ctx = canvasElement.getContext("2d");
@@ -165,16 +158,17 @@ function draw(params={},imageArray){
         }
 
         if(params.redFilter)
-        {
-            if(red < colorThreshholds.red || blue >= red || green >= red ) utils.setToValue(data,avg,i,3);
+        { //if the red filter is enabled
+            if(red < params.colorThreshold || blue >= red || green >= red ) utils.setToValue(data,avg,i,3);//set image to grayscale
             else{
+                //or remove blue and green
                 data[i+1] = avg;
                 data[i+2] =avg;
             }
         }
         if(params.greenFilter )
         {
-            if( green < colorThreshholds.green || blue >= green || red >= green ) utils.setToValue(data,avg,i,3);
+            if( green < params.colorThreshold || blue >= green || red >= green ) utils.setToValue(data,avg,i,3);
             else{ 
                 data[i] = avg;
                 data[i+2] = avg;
@@ -182,16 +176,13 @@ function draw(params={},imageArray){
         }
         if(params.blueFilter)
         {
-            if (blue < colorThreshholds.blue || red >= blue || green >= blue )utils.setToValue(data,avg,i,3);
+            if (blue < params.colorThreshold || red >= blue || green >= blue )utils.setToValue(data,avg,i,3);
             else{
                 data[i] = avg;
                 data[i+1] = avg;
             }
         }
     }// end for
-    
-
-
 
     if(params.showEmboss)
     {
@@ -311,9 +302,6 @@ function drawHK(imageArray,drawParams)
         hkInfo.gradientIndex = drawParams.hkIndex;
         updateHKGradient();
     }
-    //not currently in use
-    //cls(hkInfo.backgroundColor);
-
     //draw background image
     ctx.drawImage(imageArray[4],0,0,canvasWidth,canvasHeight);
 
@@ -327,6 +315,7 @@ function drawHK(imageArray,drawParams)
     //undo move and rotate
     ctx.restore();
 
+    //draw image overtop
     ctx.drawImage(imageArray[5],0,0,canvasWidth,canvasHeight);
 }
 
@@ -365,7 +354,6 @@ function drawSinusoid(startX,endX,y,amplitude,frequency,strokeStyle,strokeWidth)
     }
     ctx.stroke();
     ctx.closePath();
-
 
     ctx.restore();
 

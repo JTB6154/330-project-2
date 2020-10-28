@@ -3,7 +3,7 @@ let audioCTX;
 
 // **These are "private" properties - these will NOT be visible outside of this module (i.e. file)**
 // 2 - WebAudio nodes that are part of our WebAudio audio routing graph
-let _element, _sourceNode, analyserNode, _gainNode;
+let _element, _sourceNode, analyserNode, _gainNode,_distortionNode;
 
 // 3 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
@@ -51,9 +51,12 @@ function setupWebAudio(filePath){
     _gainNode = audioCTX.createGain();
     _gainNode.gain.value = DEFAULTS.gain;
 
+    _distortionNode = audioCTX.createWaveShaper();
+
 
     // 8 - connect the nodes - we now have an audio graph
-    _sourceNode.connect(analyserNode);
+    _sourceNode.connect(_distortionNode);
+    _distortionNode.connect(analyserNode);
     analyserNode.connect(_gainNode);
     _gainNode.connect(audioCTX.destination);
 }
@@ -78,4 +81,24 @@ function setVolume(value){
     _gainNode.gain.value = value;
 }
 
-export{audioCTX,setupWebAudio,playCurrentSound,pauseCurrentSound,loadSoundFile,setVolume,analyserNode};
+function toggleDistortion(enabled){
+    if(enabled)
+    {
+        _distortionNode.curve = null;
+        _distortionNode.curve = makeDistortionCurve()
+    }else{
+        _distortionNode.curve = null;
+    }
+}
+
+function makeDistortionCurve(amount =20)
+{
+    let curve = new Float32Array(DEFAULTS.numSamples);
+    for (let i =0 ; i < DEFAULTS.numSamples; ++i ) {
+        let x = i * 2 / DEFAULTS.numSamples - 1;
+        curve[i] = (3 + amount)*Math.atan(Math.sinh((x+2)*0.25)*5) / (Math.PI + amount * Math.abs(x+2)); //black metal forest mix (sounds a little crusty, and far away like black metal that was recorded in the forest)
+    }
+    return curve;
+}
+
+export{audioCTX,setupWebAudio,playCurrentSound,pauseCurrentSound,loadSoundFile,setVolume,analyserNode,toggleDistortion};

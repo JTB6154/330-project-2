@@ -2,21 +2,26 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>Audio Visualizer</title>
+	<title>Game Audio Visualizer</title>
+	<link href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap" rel="stylesheet">
 	<link href="styles/default-styles.css" type="text/css" rel="stylesheet" />
 	<script src="./src/loader.js" type="module"></script>
 </head>
 <body>
+<header>
+	<h1>Game Audio Visualizer</h1>
+</header>
 <main>
-	<canvas width="960" height="540"></canvas>
+	<div id = "canvas">
+		<canvas width="960" height="540"></canvas>
+	</div>
 	<div id="controls">
-		<h1>Controls</h1>
+
 		<section>
-			<Audio controls src="" allow="autoplay"></Audio>
-		</section>
-		<!-- <button id="playButton" data-playing="no"></button> -->
-		<section>
-			<label>Track: 
+			<h2>Controls</h2>
+			<Audio controls src="media/ThrashPack.mp3"></Audio>
+			<div>
+			<label for="trackSelect">Track: </label>
 				<select id="trackSelect">
 					<option value="media/Thrash Pack.mp3" selected>Thrash Pack</option>
 					<option value="media/Never to Return.mp3">Never to Return</option>
@@ -28,29 +33,43 @@
 					<option value="media/Greenpath.mp3">Greenpath</option>
 					<option value="media/Pure Vessel.mp3">Pure Vessel</option>					
 				</select>
-			</label>
 			<button id="fsButton">Full Screen</button>
+			</div>
 		</section>	
+	</div>
+
 		<!-- <section>
 			Volume: <input type="range" id="volumeSlider" min="0" max="2" value=".05" step="0.01">
 			<span id="volumeLabel">???</span>
 		</section> -->
-
-		<section>
-			<h1>Effects</h1>
+	<div id = "distortions">
+		<section >
+			<h2>Effects</h2>
+			<div id ="effects">
 			<span><input type="checkbox" id="invertCB"><label for="invertCB">Invert</label></span>
 			<span><input type="checkbox" id="embossCB"><label for="embossCB">Emboss</label></span>
 			<span><input type="checkbox" id="grayscaleCB"><label for="grayscaleCB">Gray Scale</label></span>
+			<span><input type="checkbox" id="distortionCB"><label for="distortionCB">Audio Distortion</label></span>
+			</div>
 		</section>
 		<section>
-			<h1>Color selection</h1>
-			<span><input type="radio" id="allRB" name = "color"><label for="allRB">All</label></span>
-			<span><input type="radio" id="redRB" name = "color"><label for="redRB">Red</label></span>
-			<span><input type="radio" id="blueRB" name = "color"><label for="blueRB">Blue</label></span>
-			<span><input type="radio" id="greenRB" name = "color"><label for="greenRB">Green</label></span>
+			<h2>Color selection</h2>
+			<div id = "colors">
+			<div><input type="radio" id="allRB" name = "color"><label for="allRB">All</label></div>
+			<div><input type="radio" id="redRB" name = "color"><label for="redRB">Red</label></div>
+			<div><input type="radio" id="blueRB" name = "color"><label for="blueRB">Blue</label></div>
+			<div><input type="radio" id="greenRB" name = "color"><label for="greenRB">Green</label></div>
+			</div>
+			<label for="colorCutoff">Minimum Color Threshhold</label>
+			<input type="range" id = "colorCutoff" min="40" max="255" value="120" step="1">
+			<span id= "cutoffLabel">???</span>
 		</section>
 	</div>
-	<p>the plan is to do like three different versions of this, and alternate between them based on the track</p>
+	<h2>Description</h2>
+	<p>The purpose of this project is to combine game art with visualization for their audio, the primary purpose was to create something that looked aesthetically pleasing and was also pleasing in terms of audio. I’m using game art alongside their soundtrack because I like them. The games i’ve pulled from are Pyre, Hollow Knight, and Risk of Rain 2</p>
 </main>
+<footer>
+	<p>All art and music belongs to their original owners and were used under fair use. This is a school project and is not meant for general distribution.</p>
+</footer>
 </body>
 </html>
